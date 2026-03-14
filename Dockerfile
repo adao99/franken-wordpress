@@ -25,7 +25,7 @@ WORKDIR /var/www/html
 
 # Expose HTTP port
 EXPOSE 80
-
+COPY Caddyfile /etc/frankenphp/Caddyfile
 # Use custom entrypoint
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["frankenphp", "php-server"]

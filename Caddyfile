@@ -1,0 +1,6 @@
+# The hostname to respond to
+:80
+
+php_server
+encode zstd br gzip
+log

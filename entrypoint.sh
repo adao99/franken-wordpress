@@ -24,10 +24,7 @@ if [ -n "$WORDPRESS_CONFIG_EXTRA" ]; then
     echo "$WORDPRESS_CONFIG_EXTRA" >> "$WP_CONFIG"
 fi
 
-# Ensure FrankenPHP binds to 0.0.0.0 if not already specified
-if [ "$1" = "frankenphp" ] && [ "$2" = "php-server" ]; then
-    set -- "$@" --host=0.0.0.0 --port=80
-fi
+
 
 # Execute the main command
 exec "$@"
