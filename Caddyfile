@@ -1,6 +1,23 @@
-# The hostname to respond to
-:80
+:80 {
+	# Trust the upstream proxy (replace with your proxy's IP, e.g., 192.168.1.50)
+	# This ensures Caddy knows the original request was HTTPS
+	# trusted_proxies 192.168.1.0/24 
 
-php_server
-encode zstd br gzip
-log
+	php_server
+	encode zstd br gzip
+
+	header {
+		# Tell the browser to always use HTTPS (HSTS)
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+		# Security Hardening
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+
+		# Optional: Clean up headers the proxy might have missed
+		-Server
+	}
+
+	log
+}

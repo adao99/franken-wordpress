@@ -6,14 +6,14 @@ WP_CONFIG="/var/www/html/wp-config.php"
 # Always regenerate wp-config.php from sample so env vars are always applied
 cp /var/www/html/wp-config-sample.php "$WP_CONFIG"
 
-# Helper: replace define if it exists, otherwise append it
+# Helper: replace define if it exists, otherwise insert before wp-settings.php require
 set_define() {
     key="$1"
     value="$2"
     if grep -q "define[( ]*'${key}'" "$WP_CONFIG"; then
         sed -i "s|define[( ]*'${key}'[^;]*);|define( '${key}', ${value} );|" "$WP_CONFIG"
     else
-        echo "define( '${key}', ${value} );" >> "$WP_CONFIG"
+        sed -i "s|require_once ABSPATH . 'wp-settings.php';|define( '${key}', ${value} );\nrequire_once ABSPATH . 'wp-settings.php';|" "$WP_CONFIG"
     fi
 }
 
@@ -39,11 +39,16 @@ set_define 'WP_REDIS_PASSWORD' "'${WP_REDIS_PASSWORD:-uhoiWUOnA3c6HCZKGdj1}'"
 set_define 'WP_REDIS_DB'       "${WP_REDIS_DB:-0}"
 set_define 'WP_REDIS_PREFIX'   "'${WP_REDIS_PREFIX:-fisio:}'"
 
-# PHP runtime overrides
-grep -q "upload_max_filesize" "$WP_CONFIG" || echo "@ini_set('upload_max_filesize', '${PHP_UPLOAD_MAX_FILESIZE:-5G}');" >> "$WP_CONFIG"
-grep -q "post_max_size"       "$WP_CONFIG" || echo "@ini_set('post_max_size', '${PHP_POST_MAX_SIZE:-5G}');"             >> "$WP_CONFIG"
-grep -q "max_execution_time"  "$WP_CONFIG" || echo "@ini_set('max_execution_time', '${PHP_MAX_EXECUTION_TIME:-300}');" >> "$WP_CONFIG"
-grep -q "max_input_time"      "$WP_CONFIG" || echo "@ini_set('max_input_time', '${PHP_MAX_INPUT_TIME:-300}');"         >> "$WP_CONFIG"
+# PHP runtime overrides — insert before wp-settings.php if not already present
+for ini_line in \
+    "@ini_set('upload_max_filesize', '${PHP_UPLOAD_MAX_FILESIZE:-5G}');" \
+    "@ini_set('post_max_size', '${PHP_POST_MAX_SIZE:-5G}');" \
+    "@ini_set('max_execution_time', '${PHP_MAX_EXECUTION_TIME:-300}');" \
+    "@ini_set('max_input_time', '${PHP_MAX_INPUT_TIME:-300}');"; do
+    key=$(echo "$ini_line" | grep -o "'[^']*'" | head -1)
+    grep -q "$key" "$WP_CONFIG" || \
+        sed -i "s|require_once ABSPATH . 'wp-settings.php';|${ini_line}\nrequire_once ABSPATH . 'wp-settings.php';|" "$WP_CONFIG"
+done
 
 # Append extra config from environment variable
 if [ -n "$WORDPRESS_CONFIG_EXTRA" ]; then
