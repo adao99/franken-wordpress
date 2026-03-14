@@ -28,4 +28,4 @@ EXPOSE 80
 COPY Caddyfile /etc/frankenphp/Caddyfile
 # Use custom entrypoint
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["frankenphp", "php-server"]
+CMD ["frankenphp", "run", "--config", "/etc/frankenphp/Caddyfile"]

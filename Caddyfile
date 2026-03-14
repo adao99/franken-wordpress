@@ -1,10 +1,6 @@
+# The hostname to respond to
 :80
 
-root * /var/www/html
-
-# Use FrankenPHP as PHP backend
-php_fastcgi unix//var/run/frankenphp.sock
-
+php_server
 encode zstd br gzip
 log
-file_server
