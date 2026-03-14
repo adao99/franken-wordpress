@@ -11,6 +11,7 @@ fi
 # Append standard WordPress env variables to wp-config.php if not already defined
 {
   [ -n "$WORDPRESS_DB_HOST" ] && grep -q "DB_HOST" "$WP_CONFIG" || echo "define('DB_HOST', '${WORDPRESS_DB_HOST}');"
+  [ -n "$WORDPRESS_DB_PORT" ] && grep -q "DB_PORT" "$WP_CONFIG" || echo "define('DB_PORT', '${WORDPRESS_DB_PORT:-3306}');"
   [ -n "$WORDPRESS_DB_NAME" ] && grep -q "DB_NAME" "$WP_CONFIG" || echo "define('DB_NAME', '${WORDPRESS_DB_NAME}');"
   [ -n "$WORDPRESS_DB_USER" ] && grep -q "DB_USER" "$WP_CONFIG" || echo "define('DB_USER', '${WORDPRESS_DB_USER}');"
   [ -n "$WORDPRESS_DB_PASSWORD" ] && grep -q "DB_PASSWORD" "$WP_CONFIG" || echo "define('DB_PASSWORD', '${WORDPRESS_DB_PASSWORD}');"
