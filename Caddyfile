@@ -25,5 +25,30 @@
 		-Server
 	}
 
+	# BEGIN Converter for Media
+	header /wp-content/*/*.jpg Cache-Control "private"
+	header /wp-content/*/*.jpeg Cache-Control "private"
+	header /wp-content/*/*.png Cache-Control "private"
+	header /wp-content/*/*.webp Cache-Control "private"
+
+	@acceptsAvif {
+		header Accept *image/avif*
+		path_regexp avif ^/wp-content/(.+)/(.+)\.(jpg|jpeg|png|webp)$
+	}
+	@acceptsWebp {
+		header Accept *image/webp*
+		path_regexp webp ^/wp-content/(.+)/(.+)\.(jpg|jpeg|png)$
+	}
+
+	handle @acceptsAvif {
+		@hasAvif file /wp-content/uploads-webpc/{re.avif.1}/{re.avif.2}.{re.avif.3}.avif
+		rewrite @hasAvif /wp-content/uploads-webpc/{re.avif.1}/{re.avif.2}.{re.avif.3}.avif
+	}
+	handle @acceptsWebp {
+		@hasWebp file /wp-content/uploads-webpc/{re.webp.1}/{re.webp.2}.{re.webp.3}.webp
+		rewrite @hasWebp /wp-content/uploads-webpc/{re.webp.1}/{re.webp.2}.{re.webp.3}.webp
+	}
+	# END Converter for Media
+
 	log
 }
