@@ -25,6 +25,11 @@ set_define() {
 [ -n "$WORDPRESS_DB_PASSWORD" ] && sed -i "s|define( 'DB_PASSWORD',.*);|define( 'DB_PASSWORD', '${WORDPRESS_DB_PASSWORD}' );|" "$WP_CONFIG"
 [ -n "$WORDPRESS_DEBUG" ]       && sed -i "s|define( 'WP_DEBUG',.*);|define( 'WP_DEBUG', ${WORDPRESS_DEBUG} );|" "$WP_CONFIG"
 
+# SSL / HTTPS behind reverse proxy
+set_define 'FORCE_SSL_ADMIN' "true"
+grep -q "\$_SERVER\['HTTPS'\]" "$WP_CONFIG" || \
+    sed -i "s|require_once ABSPATH . 'wp-settings.php';|\$_SERVER['HTTPS'] = 'on';\nrequire_once ABSPATH . 'wp-settings.php';|" "$WP_CONFIG"
+
 # Performance / upload limits
 set_define 'WP_MEMORY_LIMIT'    "'${WP_MEMORY_LIMIT:-1G}'"
 set_define 'DISALLOW_FILE_EDIT' "${DISALLOW_FILE_EDIT:-true}"
@@ -32,12 +37,12 @@ set_define 'WP_MAX_UPLOAD_SIZE' "${WP_MAX_UPLOAD_SIZE:-5368709120}"
 
 # Redis
 set_define 'WP_REDIS_SCHEME'   "'${WP_REDIS_SCHEME:-tcp}'"
-set_define 'WP_REDIS_HOST'     "'${WP_REDIS_HOST:-fisio-cache-47drru}'"
+set_define 'WP_REDIS_HOST'     "'${WP_REDIS_HOST:-localhost}'"
 set_define 'WP_REDIS_PORT'     "${WP_REDIS_PORT:-6379}"
 set_define 'WP_REDIS_USER'     "'${WP_REDIS_USER:-default}'"
-set_define 'WP_REDIS_PASSWORD' "'${WP_REDIS_PASSWORD:-uhoiWUOnA3c6HCZKGdj1}'"
+set_define 'WP_REDIS_PASSWORD' "'${WP_REDIS_PASSWORD:-non}'"
 set_define 'WP_REDIS_DB'       "${WP_REDIS_DB:-0}"
-set_define 'WP_REDIS_PREFIX'   "'${WP_REDIS_PREFIX:-fisio:}'"
+set_define 'WP_REDIS_PREFIX'   "'${WP_REDIS_PREFIX:-site:}'"
 
 # PHP runtime overrides — insert before wp-settings.php if not already present
 for ini_line in \
