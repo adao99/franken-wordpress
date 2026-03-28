@@ -10,7 +10,12 @@
 		Cache-Control "public, max-age=14400"
 	}
 
+	# Tell WordPress the original request was HTTPS
 	header {
+		X-Forwarded-Proto "https"
+		X-Forwarded-For {remote_host}
+		X-Real-IP {remote_host}
+
 		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
 		X-Content-Type-Options "nosniff"
 		X-Frame-Options "SAMEORIGIN"
