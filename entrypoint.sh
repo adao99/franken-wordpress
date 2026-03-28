@@ -44,6 +44,14 @@ set_define 'WP_REDIS_PASSWORD' "'${WP_REDIS_PASSWORD:-non}'"
 set_define 'WP_REDIS_DB'       "${WP_REDIS_DB:-0}"
 set_define 'WP_REDIS_PREFIX'   "'${WP_REDIS_PREFIX:-site:}'"
 
+# Millicache (MC_STORAGE_* — falls back to Redis vars)
+set_define 'WP_CACHE' "${WP_CACHE:-true}"
+set_define 'MC_STORAGE_HOST'     "'${MC_STORAGE_HOST:-${WP_REDIS_HOST:-127.0.0.1}}'"
+set_define 'MC_STORAGE_PORT'     "${MC_STORAGE_PORT:-${WP_REDIS_PORT:-6379}}"
+set_define 'MC_STORAGE_PASSWORD' "'${MC_STORAGE_PASSWORD:-${WP_REDIS_PASSWORD:-}}'"
+set_define 'MC_STORAGE_DB'       "${MC_STORAGE_DB:-${WP_REDIS_DB:-0}}"
+set_define 'MC_STORAGE_PREFIX'   "'${MC_STORAGE_PREFIX:-${WP_REDIS_PREFIX:-mll}}'"
+
 # PHP runtime overrides — insert before wp-settings.php if not already present
 for ini_line in \
     "@ini_set('upload_max_filesize', '${PHP_UPLOAD_MAX_FILESIZE:-5G}');" \
