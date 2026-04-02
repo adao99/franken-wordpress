@@ -29,6 +29,12 @@ set_define() {
 set_define 'FORCE_SSL_ADMIN' "true"
 grep -q "\$_SERVER\['HTTPS'\]" "$WP_CONFIG" || \
     sed -i "s|require_once ABSPATH . 'wp-settings.php';|\$_SERVER['HTTPS'] = 'on';\nrequire_once ABSPATH . 'wp-settings.php';|" "$WP_CONFIG"
+grep -q "\$_SERVER\['HTTP_X_FORWARDED_PROTO'\]" "$WP_CONFIG" || \
+    sed -i "s|require_once ABSPATH . 'wp-settings.php';|\$_SERVER['HTTP_X_FORWARDED_PROTO'] = 'https';\nrequire_once ABSPATH . 'wp-settings.php';|" "$WP_CONFIG"
+
+# Site URL — prevents mixed content on fresh install (set WORDPRESS_HOME to https://yourdomain)
+[ -n "$WORDPRESS_HOME" ]    && set_define 'WP_HOME'    "'${WORDPRESS_HOME}'"
+[ -n "$WORDPRESS_SITEURL" ] && set_define 'WP_SITEURL' "'${WORDPRESS_SITEURL}'"
 
 # Performance / upload limits
 set_define 'WP_MEMORY_LIMIT'    "'${WP_MEMORY_LIMIT:-1G}'"
