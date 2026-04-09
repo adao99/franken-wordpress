@@ -10,6 +10,7 @@ RUN curl -o wordpress.tar.gz https://wordpress.org/wordpress-6.9.4.tar.gz \
 RUN install-php-extensions \
     pdo_mysql \
     gd \
+    imagick \
     intl \
     zip \
     opcache \
