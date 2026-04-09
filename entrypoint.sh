@@ -37,9 +37,10 @@ grep -q "\$_SERVER\['HTTP_X_FORWARDED_PROTO'\]" "$WP_CONFIG" || \
 [ -n "$WORDPRESS_SITEURL" ] && set_define 'WP_SITEURL' "'${WORDPRESS_SITEURL}'"
 
 # Performance / upload limits
-set_define 'WP_MEMORY_LIMIT'    "'${WP_MEMORY_LIMIT:-1G}'"
-set_define 'DISALLOW_FILE_EDIT' "${DISALLOW_FILE_EDIT:-true}"
-set_define 'WP_MAX_UPLOAD_SIZE' "${WP_MAX_UPLOAD_SIZE:-5368709120}"
+set_define 'WP_MEMORY_LIMIT'     "'${WP_MEMORY_LIMIT:-1G}'"
+set_define 'WP_MAX_MEMORY_LIMIT' "'${WP_MAX_MEMORY_LIMIT:-2G}'"
+set_define 'DISALLOW_FILE_EDIT'  "${DISALLOW_FILE_EDIT:-true}"
+set_define 'WP_MAX_UPLOAD_SIZE'  "${WP_MAX_UPLOAD_SIZE:-5368709120}"
 
 # Redis
 set_define 'WP_REDIS_SCHEME'   "'${WP_REDIS_SCHEME:-tcp}'"
@@ -60,6 +61,7 @@ set_define 'MC_STORAGE_PREFIX'   "'${MC_STORAGE_PREFIX:-${WP_REDIS_PREFIX:-mll}}
 
 # PHP runtime overrides — insert before wp-settings.php if not already present
 for ini_line in \
+    "@ini_set('memory_limit', '${PHP_MEMORY_LIMIT:-2G}');" \
     "@ini_set('upload_max_filesize', '${PHP_UPLOAD_MAX_FILESIZE:-5G}');" \
     "@ini_set('post_max_size', '${PHP_POST_MAX_SIZE:-5G}');" \
     "@ini_set('max_execution_time', '${PHP_MAX_EXECUTION_TIME:-300}');" \
