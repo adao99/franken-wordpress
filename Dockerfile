@@ -16,6 +16,14 @@ RUN install-php-extensions \
     redis \
     mysqli
 
+# PHP upload/execution limits
+RUN { \
+    echo 'upload_max_filesize=5G'; \
+    echo 'post_max_size=5G'; \
+    echo 'max_execution_time=300'; \
+    echo 'max_input_time=300'; \
+} > /usr/local/etc/php/conf.d/uploads.ini
+
 # Copy entrypoint script
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
