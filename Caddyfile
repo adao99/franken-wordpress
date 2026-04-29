@@ -2,60 +2,119 @@
 	php_server
 	encode zstd br gzip
 
+	# Cacheable static assets
 	@cacheable {
 		path *.css *.js *.woff *.woff2 *.ttf *.otf *.ico *.png *.jpg *.jpeg *.gif *.svg *.webp *.avif
 	}
 
+	# Long-term cache for static assets (30 days)
 	header @cacheable {
-		Cache-Control "public, max-age=2419200"
-		CDN-Cache-Control "public, max-age=2419200"
-		Cloudflare-CDN-Cache-Control "public, max-age=2419200"
+		Cache-Control "public, max-age=2592000, immutable"
+		CDN-Cache-Control "public, max-age=2592000, immutable"
 	}
 
-	# Tell PHP/WordPress the original request was HTTPS (request headers → FastCGI)
+	# WordPress uploads - public cacheable
+	@uploads {
+		path /wp-content/uploads/*
+	}
+	header @uploads {
+		Cache-Control "public, max-age=2592000"
+		CDN-Cache-Control "public, max-age=2592000"
+	}
+
+	# Tell PHP/WordPress the original request was HTTPS
 	request_header X-Forwarded-Proto "https"
 	request_header X-Real-IP {remote_host}
 	request_header X-Forwarded-For {remote_host}
 
-	# Security response headers
+	# Security headers
 	header {
 		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
 		X-Content-Type-Options "nosniff"
 		X-Frame-Options "SAMEORIGIN"
+		X-XSS-Protection "1; mode=block"
 		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "geolocation=(), microphone=(), camera=()"
 		-Server
+		-X-Powered-By
 	}
 
+	# CORS headers - specific and Cloudflare-friendly
 	header {
 		Access-Control-Allow-Origin "*"
-		Access-Control-Allow-Methods "GET, POST, OPTIONS"
-		Access-Control-Allow-Headers "*"
+		Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE"
+		Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+		Access-Control-Max-Age "7200"
 	}
 
-	# BEGIN Converter for Media
-	header /wp-content/*/*.jpg Cache-Control "private"
-	header /wp-content/*/*.jpeg Cache-Control "private"
-	header /wp-content/*/*.png Cache-Control "private"
-	header /wp-content/*/*.webp Cache-Control "private"
+	# Handle OPTIONS requests for CORS
+	handle_path /wp-json/* {
+		@options method OPTIONS
+		handle @options {
+			header Content-Length 0
+			respond 204
+		}
+	}
 
+	# Image format conversion with Vary handling
 	@acceptsAvif {
 		header Accept *image/avif*
-		path_regexp avif ^/wp-content/(.+)/(.+)\.(jpg|jpeg|png|webp)$
+		path_regexp avif ^/wp-content/uploads/(.+)/(.+)\.(jpg|jpeg|png|webp)$
 	}
 	@acceptsWebp {
 		header Accept *image/webp*
-		path_regexp webp ^/wp-content/(.+)/(.+)\.(jpg|jpeg|png)$
+		path_regexp webp ^/wp-content/uploads/(.+)/(.+)\.(jpg|jpeg|png)$
 	}
 
+	# Serve AVIF if available
 	handle @acceptsAvif {
 		@hasAvif file /wp-content/uploads-webpc/{re.avif.1}/{re.avif.2}.{re.avif.3}.avif
 		rewrite @hasAvif /wp-content/uploads-webpc/{re.avif.1}/{re.avif.2}.{re.avif.3}.avif
+		header Cache-Control "public, max-age=2592000"
 	}
+
+	# Serve WebP if available
 	handle @acceptsWebp {
 		@hasWebp file /wp-content/uploads-webpc/{re.webp.1}/{re.webp.2}.{re.webp.3}.webp
 		rewrite @hasWebp /wp-content/uploads-webpc/{re.webp.1}/{re.webp.2}.{re.webp.3}.webp
+		header Cache-Control "public, max-age=2592000"
 	}
-	# END Converter for Media
 
-	log
+	# WordPress REST API - short cache or no-cache depending on your needs
+	@api {
+		path /wp-json/*
+	}
+	header @api {
+		Cache-Control "public, max-age=3600"
+		CDN-Cache-Control "public, max-age=3600"
+	}
+
+	# WordPress admin - no cache
+	@wp-admin {
+		path /wp-admin*
+		path /wp-login.php
+	}
+	header @wp-admin {
+		Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+		Pragma "no-cache"
+		Expires "0"
+	}
+
+	# Default cache for HTML/PHP (homepage, posts, pages)
+	@html {
+		not path /wp-admin*
+		not path /wp-login.php
+		not path /wp-json*
+		path_regexp ^/(.*)$
+	}
+	header @html {
+		Cache-Control "public, max-age=3600"
+		CDN-Cache-Control "public, max-age=3600"
+	}
+
+	# Logging
+	log {
+		format json
+		level info
+	}
 }
