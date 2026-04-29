@@ -60,7 +60,7 @@ set_define 'MC_STORAGE_DB'       "${MC_STORAGE_DB:-${WP_REDIS_DB:-0}}"
 set_define 'MC_STORAGE_PREFIX'   "'${MC_STORAGE_PREFIX:-${WP_REDIS_PREFIX:-mll}}'"
 
 # PHP runtime overrides — insert before wp-settings.php if not already present
-for ini_line in \
+for ini_line in \   
     "@ini_set('memory_limit', '${PHP_MEMORY_LIMIT:-2G}');" \
     "@ini_set('upload_max_filesize', '${PHP_UPLOAD_MAX_FILESIZE:-5G}');" \
     "@ini_set('post_max_size', '${PHP_POST_MAX_SIZE:-5G}');" \
