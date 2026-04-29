@@ -85,8 +85,8 @@
 		path /wp-json/*
 	}
 	header @api {
-		Cache-Control "public, max-age=3600"
-		CDN-Cache-Control "public, max-age=3600"
+		Cache-Control "public, max-age=7889238"
+		CDN-Cache-Control "public, max-age=7889238"
 	}
 
 	# WordPress admin - no cache
@@ -108,8 +108,8 @@
 		path_regexp ^/(.*)$
 	}
 	header @html {
-		Cache-Control "public, max-age=3600"
-		CDN-Cache-Control "public, max-age=3600"
+		Cache-Control "public, max-age=7889238"
+		CDN-Cache-Control "public, max-age=7889238"
 	}
 
 	# Logging
