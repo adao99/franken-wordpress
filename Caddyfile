@@ -7,9 +7,9 @@
 	}
 
 	header @cacheable {
-		?Cache-Control "public, max-age=604800"
-		?CDN-Cache-Control "public, max-age=604800"
-		?Cloudflare-CDN-Cache-Control "public, max-age=604800"
+		Cache-Control "public, max-age=2419200"
+		CDN-Cache-Control "public, max-age=2419200"
+		Cloudflare-CDN-Cache-Control "public, max-age=2419200"
 	}
 
 	# Tell PHP/WordPress the original request was HTTPS (request headers → FastCGI)
