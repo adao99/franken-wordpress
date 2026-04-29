@@ -26,6 +26,17 @@
 		-Server
 	}
 
+	@cors_origin {
+		header Origin ~^https?://[^/]+\.dot(design|comunicacao)\.pt$
+	}
+	header @cors_origin {
+		Access-Control-Allow-Origin "{http.request.header.Origin}"
+		Access-Control-Allow-Methods "GET, POST, OPTIONS"
+		Access-Control-Allow-Headers "*"
+		Access-Control-Allow-Credentials "true"
+		Vary Origin
+	}
+
 	# BEGIN Converter for Media
 	header /wp-content/*/*.jpg Cache-Control "private"
 	header /wp-content/*/*.jpeg Cache-Control "private"
