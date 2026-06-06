@@ -21,8 +21,9 @@ RUN install-php-extensions \
 RUN { \
     echo 'upload_max_filesize=5G'; \
     echo 'post_max_size=5G'; \
-    echo 'max_execution_time=300'; \
-    echo 'max_input_time=300'; \
+    echo 'max_execution_time=3600'; \
+    echo 'max_input_time=3600'; \
+    echo 'default_socket_timeout=3600'; \
 } > /usr/local/etc/php/conf.d/uploads.ini
 
 # Copy entrypoint script

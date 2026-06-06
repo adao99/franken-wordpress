@@ -1,3 +1,15 @@
+{
+	# Allow long-running uploads (1 hour). write 0 = no response write timeout.
+	servers {
+		timeouts {
+			read_body 1h
+			read_header 1h
+			write 0
+			idle 1h
+		}
+	}
+}
+
 :80 {
 	php_server
 	encode zstd br gzip

@@ -64,8 +64,9 @@ for ini_line in \
     "@ini_set('memory_limit', '${PHP_MEMORY_LIMIT:-2G}');" \
     "@ini_set('upload_max_filesize', '${PHP_UPLOAD_MAX_FILESIZE:-5G}');" \
     "@ini_set('post_max_size', '${PHP_POST_MAX_SIZE:-5G}');" \
-    "@ini_set('max_execution_time', '${PHP_MAX_EXECUTION_TIME:-300}');" \
-    "@ini_set('max_input_time', '${PHP_MAX_INPUT_TIME:-300}');"; do
+    "@ini_set('max_execution_time', '${PHP_MAX_EXECUTION_TIME:-3600}');" \
+    "@ini_set('max_input_time', '${PHP_MAX_INPUT_TIME:-3600}');" \
+    "@ini_set('default_socket_timeout', '${PHP_DEFAULT_SOCKET_TIMEOUT:-3600}');"; do
     key=$(echo "$ini_line" | grep -o "'[^']*'" | head -1)
     grep -q "$key" "$WP_CONFIG" || \
         sed -i "s|require_once ABSPATH . 'wp-settings.php';|${ini_line}\nrequire_once ABSPATH . 'wp-settings.php';|" "$WP_CONFIG"
