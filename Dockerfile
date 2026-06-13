@@ -10,6 +10,8 @@ RUN curl -o wordpress.tar.gz https://wordpress.org/wordpress-6.9.4.tar.gz \
 RUN apk upgrade --no-cache && apk add --no-cache ca-certificates openssl curl \
     && curl -o /usr/local/share/ca-certificates/isrg-root-yr.crt \
         https://letsencrypt.org/certs/gen-y/root-yr.pem \
+    && curl -o /usr/local/share/ca-certificates/isrg-root-ye.crt \
+        https://letsencrypt.org/certs/gen-y/root-ye.pem \
     && update-ca-certificates
 
 # Install PHP extensions
