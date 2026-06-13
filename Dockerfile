@@ -10,7 +10,6 @@ RUN curl -o wordpress.tar.gz https://wordpress.org/wordpress-6.9.4.tar.gz \
 RUN install-php-extensions \
     pdo_mysql \
     gd \
-    imagick \
     intl \
     zip \
     opcache \
@@ -24,6 +23,12 @@ RUN { \
     echo 'max_execution_time=3600'; \
     echo 'max_input_time=3600'; \
     echo 'default_socket_timeout=3600'; \
+    echo 'memory_limit=1G'; \
+    echo 'opcache.interned_strings_buffer=64'; \
+    echo 'opcache.memory_consumption=256'; \
+    echo 'opcache.save_comments=1'; \
+    echo 'opcache.validate_timestamps=1'; \
+    echo 'opcache.revalidate_freq=0'; \
 } > /usr/local/etc/php/conf.d/uploads.ini
 
 # Copy entrypoint script
