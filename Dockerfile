@@ -1,10 +1,13 @@
 # Use FrankenPHP Alpine image
-FROM dunglas/frankenphp:1.12.1-php8-alpine
+FROM dunglas/frankenphp:1.12.4-php8-alpine
 
 # Install WordPress
 RUN curl -o wordpress.tar.gz https://wordpress.org/wordpress-6.9.4.tar.gz \
     && tar -xzf wordpress.tar.gz -C /var/www/html --strip-components=1 \
     && rm wordpress.tar.gz
+
+# Update CA certificates
+RUN apk add --no-cache ca-certificates && update-ca-certificates
 
 # Install PHP extensions
 RUN install-php-extensions \
