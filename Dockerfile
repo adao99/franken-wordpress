@@ -12,6 +12,8 @@ RUN apk upgrade --no-cache && apk add --no-cache ca-certificates openssl curl \
         https://letsencrypt.org/certs/gen-y/root-yr.pem \
     && curl -o /usr/local/share/ca-certificates/isrg-root-ye.crt \
         https://letsencrypt.org/certs/gen-y/root-ye.pem \
+    && curl -o /usr/local/share/ca-certificates/letsencrypt-r13.crt \
+        https://letsencrypt.org/certs/2024/r13.pem \
     && update-ca-certificates
 
 # Install PHP extensions

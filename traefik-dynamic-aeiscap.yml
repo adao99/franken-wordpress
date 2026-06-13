@@ -1,0 +1,51 @@
+http:
+  routers:
+    aeiscap-wp-9ob1cb-router-129:
+      rule: Host(`www.aeiscap.com`)
+      service: aeiscap-wp-9ob1cb-service-129
+      middlewares:
+        - redirect-to-https
+      entryPoints:
+        - web
+    aeiscap-wp-9ob1cb-router-websecure-129:
+      rule: Host(`www.aeiscap.com`)
+      service: aeiscap-wp-9ob1cb-service-129
+      middlewares: []
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: letsencrypt
+    aeiscap-wp-9ob1cb-router-130:
+      rule: Host(`aeiscap.com`)
+      service: aeiscap-wp-9ob1cb-service-130
+      middlewares:
+        - redirect-to-https
+      entryPoints:
+        - web
+    aeiscap-wp-9ob1cb-router-websecure-130:
+      rule: Host(`aeiscap.com`)
+      service: aeiscap-wp-9ob1cb-service-130
+      middlewares: []
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: letsencrypt
+  services:
+    aeiscap-wp-9ob1cb-service-129:
+      loadBalancer:
+        servers:
+          - url: http://aeiscap-wp-9ob1cb:80
+        passHostHeader: true
+        serversTransport: longupload-transport
+    aeiscap-wp-9ob1cb-service-130:
+      loadBalancer:
+        servers:
+          - url: http://aeiscap-wp-9ob1cb:80
+        passHostHeader: true
+        serversTransport: longupload-transport
+  serversTransports:
+    longupload-transport:
+      forwardingTimeouts:
+        dialTimeout: "3000s"
+        responseHeaderTimeout: "0s"
+        idleConnTimeout: "900s"

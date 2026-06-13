@@ -1,0 +1,22 @@
+# Traefik STATIC config snippet (Dokploy: /etc/dokploy/traefik/traefik.yml)
+# Add the `transport.respondingTimeouts` blocks under your existing entryPoints.
+# Static config does NOT hot-reload — restart the Traefik container after editing.
+#
+# readTimeout = max time to read the full request body (the 1.18GB ai1wm upload).
+# Default ~60s is the source of the 502-at-60s during upload.
+
+entryPoints:
+  web:
+    address: ":80"
+    transport:
+      respondingTimeouts:
+        readTimeout: "3600s"
+        writeTimeout: "3600s"
+        idleTimeout: "3600s"
+  websecure:
+    address: ":443"
+    transport:
+      respondingTimeouts:
+        readTimeout: "3600s"
+        writeTimeout: "3600s"
+        idleTimeout: "3600s"
