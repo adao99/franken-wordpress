@@ -23,7 +23,17 @@ set_define() {
 [ -n "$WORDPRESS_DB_NAME" ]     && sed -i "s|define( 'DB_NAME',.*);|define( 'DB_NAME', '${WORDPRESS_DB_NAME}' );|" "$WP_CONFIG"
 [ -n "$WORDPRESS_DB_USER" ]     && sed -i "s|define( 'DB_USER',.*);|define( 'DB_USER', '${WORDPRESS_DB_USER}' );|" "$WP_CONFIG"
 [ -n "$WORDPRESS_DB_PASSWORD" ] && sed -i "s|define( 'DB_PASSWORD',.*);|define( 'DB_PASSWORD', '${WORDPRESS_DB_PASSWORD}' );|" "$WP_CONFIG"
-[ -n "$WORDPRESS_DEBUG" ]       && sed -i "s|define( 'WP_DEBUG',.*);|define( 'WP_DEBUG', ${WORDPRESS_DEBUG} );|" "$WP_CONFIG"
+# Debug: WORDPRESS_DEBUG=1 enables full debug logging, 0/unset disables everything
+if [ "$WORDPRESS_DEBUG" = "1" ]; then
+    sed -i "s|define( 'WP_DEBUG',.*);|define( 'WP_DEBUG', true );|" "$WP_CONFIG"
+    set_define 'WP_DEBUG_LOG'     "true"
+    set_define 'WP_DEBUG_DISPLAY' "false"
+    sed -i "s|require_once ABSPATH . 'wp-settings.php';|@ini_set('display_errors', 0);\nrequire_once ABSPATH . 'wp-settings.php';|" "$WP_CONFIG"
+else
+    sed -i "s|define( 'WP_DEBUG',.*);|define( 'WP_DEBUG', false );|" "$WP_CONFIG"
+    set_define 'WP_DEBUG_LOG'     "false"
+    set_define 'WP_DEBUG_DISPLAY' "false"
+fi
 
 # SSL / HTTPS behind reverse proxy
 set_define 'FORCE_SSL_ADMIN' "true"
