@@ -34,6 +34,9 @@ RUN { \
     echo 'max_input_time=3600'; \
     echo 'default_socket_timeout=3600'; \
     echo 'memory_limit=1G'; \
+    echo 'display_errors=Off'; \
+    echo 'display_startup_errors=Off'; \
+    echo 'log_errors=On'; \
     echo 'opcache.interned_strings_buffer=64'; \
     echo 'opcache.memory_consumption=256'; \
     echo 'opcache.save_comments=1'; \
