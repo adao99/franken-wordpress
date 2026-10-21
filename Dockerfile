@@ -1,5 +1,5 @@
-# Use FrankenPHP Alpine image
-FROM dunglas/frankenphp:1.12.7-php8-alpine
+# Use FrankenPHP Alpine image (>= 1.13.2: PHP 8.5.12, fixes PHP2Shell CVE-2026-109618/109619)
+FROM dunglas/frankenphp:1.13.2-php8-alpine
 
 # Install WordPress
 RUN curl -o wordpress.tar.gz https://wordpress.org/wordpress-7.0.3.tar.gz \
