@@ -28,7 +28,8 @@ RUN install-php-extensions \
     zip \
     opcache \
     redis \
-    mysqli
+    mysqli \
+    soap
 
 # PHP upload/execution limits
 RUN { \
