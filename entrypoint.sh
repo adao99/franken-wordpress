@@ -89,5 +89,16 @@ if [ -n "$WORDPRESS_CONFIG_EXTRA" ]; then
     echo "$WORDPRESS_CONFIG_EXTRA" >> "$WP_CONFIG"
 fi
 
+# Update WordPress core to latest on startup. Runs before the web server starts,
+# so the upgrade staging files are never web-reachable. Never blocks startup.
+wp_cli() { wp --allow-root --path=/var/www/html "$@"; }
+# timeout: default_socket_timeout=3600 would otherwise hang startup on an unreachable DB
+if timeout 30 wp --allow-root --path=/var/www/html core is-installed; then
+    { wp_cli core update && wp_cli core update-db; } \
+        || echo "WARNING: WordPress core update failed, continuing with installed version" >&2
+else
+    echo "Skipping WordPress core update: site not installed or database unreachable" >&2
+fi
+
 # Execute the main command
 exec "$@"

@@ -2,9 +2,14 @@
 FROM dunglas/frankenphp:1.13.2-php8-alpine
 
 # Install WordPress
-RUN curl -o wordpress.tar.gz https://wordpress.org/wordpress-7.0.3.tar.gz \
+RUN curl -o wordpress.tar.gz https://wordpress.org/wordpress-7.1.4.tar.gz \
     && tar -xzf wordpress.tar.gz -C /var/www/html --strip-components=1 \
     && rm wordpress.tar.gz
+
+# Install WP-CLI (pinned, checksum-verified) — used by entrypoint for core updates
+RUN curl -fsSL -o /usr/local/bin/wp https://github.com/wp-cli/wp-cli/releases/download/v2.12.0/wp-cli-2.12.0.phar \
+    && echo "be928f6b8ca1e8dfb9d2f4b75a13aa4aee0896f8a9a0a1c45cd5d2c98605e6172e6d014dda2e27f88c98befc16c040cbb2bd1bfa121510ea5cdf5f6a30fe8832  /usr/local/bin/wp" | sha512sum -c - \
+    && chmod +x /usr/local/bin/wp
 
 # Update CA certificates
 RUN apk upgrade --no-cache && apk add --no-cache ca-certificates openssl curl \
