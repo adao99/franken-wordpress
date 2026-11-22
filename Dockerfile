@@ -1,8 +1,9 @@
-# Use FrankenPHP Alpine image (>= 1.13.2: PHP 8.5.12, fixes PHP2Shell CVE-2026-109618/109619)
-FROM dunglas/frankenphp:1.13.2-php8-alpine
+# FrankenPHP 1.14.0 (Caddy 2.11.9, PHP 8.5.13). Pin php8.5: the php8 tags are PHP 8.6 since 1.14,
+# which WordPress 7.1 does not support and phpredis 6.3.0 does not compile on.
+FROM dunglas/frankenphp:1.14.0-php8.5-alpine
 
 # Install WordPress
-RUN curl -o wordpress.tar.gz https://wordpress.org/wordpress-7.1.4.tar.gz \
+RUN curl -o wordpress.tar.gz https://wordpress.org/wordpress-7.1.5.tar.gz \
     && tar -xzf wordpress.tar.gz -C /var/www/html --strip-components=1 \
     && rm wordpress.tar.gz
 
@@ -34,7 +35,8 @@ RUN install-php-extensions \
     opcache \
     redis \
     mysqli \
-    soap
+    soap \
+    exif
 
 # PHP upload/execution limits
 RUN { \
